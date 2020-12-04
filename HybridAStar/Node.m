@@ -4,10 +4,10 @@ classdef Node
     properties
         parent_node=[];          % 父节点的状态空间-Node
         parent_ctrl=[];
-        pos=[0 0 0];        % 位置行向量
-        vel=[0 0 0];        % 速度行向量
-        posInd=[0 0 0];     %
-        velInd=[0 0 0];     %
+        pos=[0 0 0]';        % 位置行向量
+        vel=[0 0 0]';        % 速度行向量
+        posInd=[0 0 0]';     %
+        velInd=[0 0 0]';     %
         f=0;                % 代价函数
         g=0;                % 已经花费的代价
         h=0;                % 启发函数值
@@ -19,10 +19,11 @@ classdef Node
             % NODE类的构造函数
             %   此处显示详细说明
             obj.parent_node=parent_node; % 父节点状态
-            obj.pos=pos; % 位置
+            obj.pos=pos(:); % 位置
+            obj.vel=vel(:); % 速度
             % 计算节点所处的栅格（整数）
-            obj.posInd=float2ind(pos,Cfg.PosRes,Cfg.posMax);
-            obj.velInd=float2ind(vel,Cfg.VelRes,Cfg.velMin);
+            obj.posInd=float2ind(obj.pos,Cfg.PosRes,Cfg.posMax);
+            obj.velInd=float2ind(obj.vel,Cfg.VelRes,Cfg.velMin);
             %
             if ~isempty(parent_node) % 第一个节点没有parent_node,用[]代替
                 obj.h=h;

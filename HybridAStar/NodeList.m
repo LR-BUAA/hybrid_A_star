@@ -64,7 +64,7 @@ classdef NodeList<handle
             bool=false;cnt=1;ind=0;node_return=0;
             for node_=obj.list
                 % ¶Ô±ÈposInd,velInd
-                if all(node_.posInd==node.posInd) && all(node_.velInd==node.velInd)
+                if all(node_.posInd==node.posInd) %&& all(node_.velInd==node.velInd)
                     bool=true;
                     ind=cnt;
                     node_return=node_;

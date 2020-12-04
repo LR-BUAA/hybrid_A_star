@@ -1,7 +1,8 @@
 function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_state,Cfg)
     %
     % return_flag: 0-寻路失败；1-寻路成功；
-    state_history=[start_state];% n*6
+    state_history=[start_state];% 6*n
+    ctl_history=[];
 
     A=[0 0 0 1 0 0;0 0 0 0 1 0;0 0 0 0 0 1;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0];
     B=[zeros(3);eye(3)];
@@ -22,7 +23,8 @@ function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_st
     % 初始化
     start_node=Node(start_state(1:3),start_state(4:6),[],getHeuristic(start_state,goal_state),0,Cfg);
     Open.add(start_node);
-
+    
+    return_flag=false;
     while ~isempty(Open.list)
         % OpenList中弹出代价函数最小的点
         [node_exist,wk_node]=Open.pop('min'); % 弹出节点
@@ -37,11 +39,11 @@ function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_st
         for i=1:length(ax) % 遍历控制量生成子节点
             ctr=[ax(i) ay(i) az(i)]';
             % 求取子节点状态变量
-            [y1,t1,state_now]=lsim(ss_,[ctr ctr],[0,Cfg.dT],[wk_node.pos,wk_node.vel]');
-            y1=y1(end,:);t1=wk_node.t+Cfg.dT;state_now=state_now(end,:);
+            [y1,t1,state_now]=lsim(ss_,[ctr ctr],[0,Cfg.dT],[wk_node.pos;wk_node.vel]);
+            y1=y1(end,:);t1=wk_node.t+Cfg.dT;state_now=state_now(end,:)';
 
             %　计算代价函数
-            h=getHeuristic(start_state,start_state);% h-启发值：无视障碍物的最优控制
+            h=getHeuristic(state_now,start_state);% h-启发值：无视障碍物的最优控制
             % g-已用路径的代价：\int^T_0 1+u^Tu dt
 %            g=wk_node.g+(1+ctr'*ctr)*t1;
 %            f=g+h;
@@ -52,8 +54,12 @@ function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_st
     end
 
     if return_flag
-        % TODO:反向寻路
-
+        % TODO
+        while ~isempty(wk_node)
+            state_history=[state_history,[wk_node.pos;wk_node.vel]];
+            ctl_history=[ctl_history, wk_node.parent_ctrl];
+            wk_node=wk_node.parent_node;
+        end
     end
 end
 
@@ -68,12 +74,12 @@ function h = getHeuristic(state_now,state_goal)
     h=Jmin;
 end
 
- function J=cost(start_state,goal_state,T)
+function J=cost(start_state,goal_state,T)
      constans=zeros(6,1);
-     ds=goal_state(:)-start_state(:)-[start_state(4:6)*T 0 0 0]';
+     ds=goal_state(:)-start_state(:)-[start_state(4:6)*T;0;0;0];
      A=[-12/(T*T*T)*eye(3),6/(T*T)*eye(3);6/(T*T)*eye(3),-2/T*eye(3)];
      constans=A*ds;
      a1=constans(1);a2=constans(2);a3=constans(3);
      b1=constans(4);b2=constans(5);b3=constans(6);
      J=T+(1/3*a1*a1*T*T*T+a1*b1*T*T+b1*b1*T)+(1/3*a2*a2*T*T*T+a2*b2*T*T+b2*b2*T)+(1/3*a3*a3*T*T*T+a3*b3*T*T+b3*b3*T);
- end
+end
