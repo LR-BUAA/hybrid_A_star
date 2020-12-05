@@ -19,10 +19,11 @@ classdef Node
             % NODE类的构造函数
             %   此处显示详细说明
             obj.parent_node=parent_node; % 父节点状态
+            obj.parent_ctrl=parent_ctrl; % 父节点操控
             obj.pos=pos(:); % 位置
             obj.vel=vel(:); % 速度
             % 计算节点所处的栅格（整数）
-            obj.posInd=float2ind(obj.pos,Cfg.PosRes,Cfg.posMax);
+            obj.posInd=float2ind(obj.pos,Cfg.PosRes,Cfg.posMin);
             obj.velInd=float2ind(obj.vel,Cfg.VelRes,Cfg.velMin);
             %
             if ~isempty(parent_node) % 第一个节点没有parent_node,用[]代替

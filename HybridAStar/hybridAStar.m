@@ -21,16 +21,18 @@ function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_st
     Open=NodeList(Cfg);
     Close=NodeList(Cfg);
     % 初始化
-    start_node=Node(start_state(1:3),start_state(4:6),[],getHeuristic(start_state,goal_state),0,Cfg);
+    start_node=Node(start_state(1:3),start_state(4:6),[],getHeuristic(start_state,goal_state),[],Cfg);
     Open.add(start_node);
     
     return_flag=false;
+    search_history=[];
     while ~isempty(Open.list)
         % OpenList中弹出代价函数最小的点
         [node_exist,wk_node]=Open.pop('min'); % 弹出节点
         Close.add(wk_node,false); % 加入CloseList
+        search_history=[search_history wk_node.pos];
         % TODO:到达目标的判定
-        if norm(wk_node.pos-goal_state(1:3))<0.1 && norm(wk_node.vel-goal_state(4:6))
+        if norm(wk_node.pos-goal_state(1:3))<0.5 && norm(wk_node.vel-goal_state(4:6))<0.5
             return_flag=1;
             break
         end
@@ -54,7 +56,6 @@ function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_st
     end
 
     if return_flag
-        % TODO
         while ~isempty(wk_node)
             state_history=[state_history,[wk_node.pos;wk_node.vel]];
             ctl_history=[ctl_history, wk_node.parent_ctrl];

@@ -35,6 +35,11 @@ classdef NodeList<handle
             else
                 obj.list=[obj.list,new_node];
             end
+            if isempty(new_node.parent_node)
+                [new_node.parent_ctrl,new_node.pos,new_node.vel,[0 0 new_node.t]']
+            else
+                [new_node.parent_node.pos,new_node.parent_node.vel,new_node.parent_ctrl,new_node.pos,new_node.vel,[new_node.g new_node.h new_node.t]']
+            end            
         end
 
         function [bool node]=pop(obj,ins)
