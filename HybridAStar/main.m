@@ -12,7 +12,7 @@ Cfg.velMin=[-2 -2 -2]';Cfg.velMax=[2 2 2]';
 
 % TODO: 地图生成
 % obstacles=[1,0,0;1,1,0;1,2,0;1,0,1;1,1,1;1,2,1;0,0,1;0,1,1;0,2,1;]; % [n][3]
-obstacles=[];
+obstacles=[];   
 Cfg.map=zeros((Cfg.posMax'-Cfg.posMin')/Cfg.PosRes);% 仅有不可达位置
 for obs_=obstacles'
 %   Cfg.map([ceil(obs_(1)/Cfg.PosRes):ceil((obs_(1)+1)/Cfg.PosRes)],[ceil(obs_(2)/Cfg.PosRes):ceil((obs_(2)+1)/Cfg.PosRes)],[ceil(obs_(3)/Cfg.PosRes):ceil((obs_(3)+1)/Cfg.PosRes)])=1;

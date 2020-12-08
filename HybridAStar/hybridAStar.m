@@ -1,7 +1,7 @@
 function [return_flag,state_history,ctl_history]=hybridAStar(start_state,goal_state,Cfg)
     %
     % return_flag: 0-寻路失败；1-寻路成功；
-    state_history=[start_state];% 6*n
+    state_history=[];% 6*n
     ctl_history=[];
 
     A=[0 0 0 1 0 0;0 0 0 0 1 0;0 0 0 0 0 1;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0];
